@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bravo42 | Portfolio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Background accents -->
+  <div class="bg-blobs" aria-hidden="true">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="blob blob-3"></span>
+  </div>
+
+  <!-- Header -->
+  <header class="header" id="top">
+    <nav class="nav container">
+      <a class="logo" href="#home">
+        <span class="logo-dot"></span>
+        <span>Bravo42</span>
+      </a>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <div class="nav-links" id="navLinks">
+        <a class="nav-link active" href="#home">Home</a>
+        <a class="nav-link" href="#about">About</a>
+        <a class="nav-link" href="#skills">Skills</a>
+        <a class="nav-link" href="#projects">Projects</a>
+        <a class="nav-link" href="#contact">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="section hero" id="home">
+      <div class="container hero-grid">
+        <div class="hero-left reveal">
+          <p class="eyebrow">Assalamualikum</p>
+          <h1 class="hero-title">
+            I’m <span class="accent">Arif Shahriar</span><br/>
+            <span class="hero-role">Software Developer</span>
+          </h1>
+
+          <p class="hero-sub">
+            <span class="muted">I build clean, functional apps and websites.</span><br/>
+            <span class="typing">
+              <span id="typedText" data-typed='["JavaFX Developer","Web Developer","Cybersecurity Learner","Problem Solver"]'></span>
+              <span class="cursor" aria-hidden="true">|</span>
+            </span>
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn primary" href="#projects">View Projects</a>
+            <a class="btn ghost" href="#" id="downloadCvBtn">Download CV</a>
+          </div>
+
+          <div class="hero-badges">
+            <span class="pill">C</span>
+            <span class="pill">C++</span>
+            <span class="pill">Java</span>
+            <span class="pill">JavaFX</span>
+            <span class="pill">HTML CSS JS</span>
+            <span class="pill">MySQL</span>
+          </div>
+        </div>
+
+        <div class="hero-right reveal">
+          <div class="photo-wrap">
+            
+            <img
+              class="hero-photo"
+              src="profile.png"
+              alt="Portrait"
+              loading="lazy"
+            />
+            
+          </div>
+        </div>
+      </div>
+
+      <a class="scroll-hint" href="#about" aria-label="Scroll to About">
+        <span class="mouse"></span>
+        <span class="muted">Scroll</span>
+      </a>
+    </section>
+
+    <!-- About -->
+    <section class="section" id="about">
+      <div class="container two-col">
+        <div class="about-left reveal">
+          <h2 class="section-title">About me</h2>
+          <p class="section-sub">
+            I’m a CSE student building real projects using Java, JavaFX, and modern web tech.
+            I care about performance, clean design, and practical features.
+          </p>
+
+          <div class="service-list">
+            <div class="service">
+              <div class="icon">💻</div>
+              <div>
+                <p class="strong">Website Development</p>
+                <p class="muted small">Responsive UI, modern layout, smooth animations</p>
+              </div>
+            </div>
+            <div class="service">
+              <div class="icon">🧩</div>
+              <div>
+                <p class="strong">Desktop Apps</p>
+                <p class="muted small">JavaFX apps with file-based storage and clean UX</p>
+              </div>
+            </div>
+            <div class="service">
+              <div class="icon">🛡️</div>
+              <div>
+                <p class="strong">Security Mindset</p>
+                <p class="muted small">Learning cybersecurity principles and safe design</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-right reveal">
+          <div class="stats-grid">
+            <div class="stat card">
+              <p class="stat-num"><span class="counter" data-target="12">0</span><span class="accent">+</span></p>
+              <p class="muted">Projects completed</p>
+            </div>
+            <div class="stat card">
+              <p class="stat-num"><span class="counter" data-target="5">0</span><span class="accent">+</span></p>
+              <p class="muted">Tech stack</p>
+            </div>
+            <div class="stat card">
+              <p class="stat-num"><span class="counter" data-target="2">0</span><span class="accent">+</span></p>
+              <p class="muted">Years learning</p>
+            </div>
+          </div>
+
+          <div class="card about-card">
+            <p class="strong">Quick highlights</p>
+            <ul class="bullets">
+              <li>JavaFX Family Health Record Management System</li>
+              <li>Alumni Networking and Directory System with PHP and MySQL</li>
+              <li>Blood Donation Desktop App concept and UI planning</li>
+            </ul>
+            <a class="btn small primary" href="#contact">Let’s talk</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section class="section" id="skills">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2 class="section-title">Skills</h2>
+          <p class="section-sub">A simple, honest snapshot of what I use and build with</p>
+        </div>
+
+        <div class="skills-grid">
+          <div class="skill card reveal">
+            <div class="skill-top">
+              <p class="strong">Java</p>
+              <p class="muted small">Advanced</p>
+            </div>
+            <div class="bar"><span style="width: 88%"></span></div>
+          </div>
+
+          <div class="skill card reveal">
+            <div class="skill-top">
+              <p class="strong">JavaFX</p>
+              <p class="muted small">Strong</p>
+            </div>
+            <div class="bar"><span style="width: 82%"></span></div>
+          </div>
+
+          <div class="skill card reveal">
+            <div class="skill-top">
+              <p class="strong">C++</p>
+              <p class="muted small">Strong</p>
+            </div>
+            <div class="bar"><span style="width: 78%"></span></div>
+          </div>
+
+          <div class="skill card reveal">
+            <div class="skill-top">
+              <p class="strong">Python</p>
+              <p class="muted small">Good</p>
+            </div>
+            <div class="bar"><span style="width: 72%"></span></div>
+          </div>
+
+          <div class="skill card reveal">
+            <div class="skill-top">
+              <p class="strong">HTML CSS JS</p>
+              <p class="muted small">Good</p>
+            </div>
+            <div class="bar"><span style="width: 74%"></span></div>
+          </div>
+
+          <div class="skill card reveal">
+            <div class="skill-top">
+              <p class="strong">MySQL</p>
+              <p class="muted small">Learning</p>
+            </div>
+            <div class="bar"><span style="width: 58%"></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section class="section" id="projects">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2 class="section-title">Projects</h2>
+          <p class="section-sub">Some things I’ve built or I’m actively building</p>
+        </div>
+
+        <div class="projects-grid">
+          <article class="project card reveal">
+            <div class="project-top">
+              <span class="tag">JavaFX</span>
+              <span class="tag">Local Files</span>
+            </div>
+            <h3 class="project-title">Family Health Record Management System</h3>
+            <p class="muted">
+              Multi-page JavaFX desktop app with member profiles, reports, uploads, reminders, and analytics.
+            </p>
+            <div class="project-actions">
+              <a class="btn small primary" href="#contact">Request demo</a>
+              <a class="btn small ghost" href="#" onclick="return false;">Source</a>
+            </div>
+          </article>
+
+          <article class="project card reveal">
+            <div class="project-top">
+              <span class="tag">PHP</span>
+              <span class="tag">MySQL</span>
+            </div>
+            <h3 class="project-title">Alumni Networking and Directory System</h3>
+            <p class="muted">
+              Web-based alumni directory with profiles, search, and structured records for networking.
+            </p>
+            <div class="project-actions">
+              <a class="btn small primary" href="#contact">Collaborate</a>
+              <a class="btn small ghost" href="#" onclick="return false;">Preview</a>
+            </div>
+          </article>
+
+          <article class="project card reveal">
+            <div class="project-top">
+              <span class="tag">Java</span>
+              <span class="tag">JavaFX</span>
+            </div>
+            <h3 class="project-title">Blood Donation Desktop App</h3>
+            <p class="muted">
+              Donor records, availability search, age restriction, and photo support using local storage.
+            </p>
+            <div class="project-actions">
+              <a class="btn small primary" href="#contact">Discuss</a>
+              <a class="btn small ghost" href="#" onclick="return false;">Details</a>
+            </div>
+          </article>
+
+          <article class="project card reveal">
+            <div class="project-top">
+              <span class="tag">Java</span>
+              <span class="tag">Desktop</span>
+            </div>
+            <h3 class="project-title">Club Project Management System</h3>
+            <p class="muted">
+              Varsity club management tool with unique user ID, phone number, and role-based features.
+            </p>
+            <div class="project-actions">
+              <a class="btn small primary" href="#contact">Plan</a>
+              <a class="btn small ghost" href="#" onclick="return false;">Roadmap</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact">
+      <div class="container two-col">
+        <div class="reveal">
+          <h2 class="section-title">Contact</h2>
+          <p class="section-sub">Want to work together or need a project build</p>
+
+          <div class="contact-cards">
+            <a class="contact-card card" href="mailto:youremail@example.com">
+              <p class="muted small">Email</p>
+              <p class="strong">arifshahriar85204@gmail.com</p>
+            </a>
+            <a class="contact-card card" href="#" onclick="return false;">
+              <p class="muted small">GitHub</p>
+              <p class="strong">github.com/yourusername</p>
+            </a>
+            <a class="contact-card card" href="#" onclick="return false;">
+              <p class="muted small">LinkedIn</p>
+              <p class="strong">www.linkedin.com/in/arif-shahriar-027128278</p>
+            </a>
+          </div>
+        </div>
+
+        <form class="card form reveal" id="contactForm">
+          <div class="form-row">
+            <label class="muted small" for="name">Name</label>
+            <input id="name" name="name" type="text" placeholder="Your name" required />
+          </div>
+          <div class="form-row">
+            <label class="muted small" for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@example.com" required />
+          </div>
+          <div class="form-row">
+            <label class="muted small" for="message">Message</label>
+            <textarea id="message" name="message" rows="5" placeholder="Write your message..." required></textarea>
+          </div>
+          <button class="btn primary" type="submit">Send Message</button>
+          <p class="muted small" id="formStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-row">
+      <p class="muted small">© <span id="year"></span> Bravo42. All rights reserved.</p>
+      <a class="backtop" href="#top">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

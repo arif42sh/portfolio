@@ -1,0 +1,16 @@
+Arif Shahriar
+CSE Student | AI Enthusiast | Software Developer
+
+Skills:
+- Java, Python, C++, JavaScript, PHP
+- Android, Spring Boot, React, MySQL, Firebase, Supabase
+- Git/GitHub, Docker, VS Code, Android Studio
+
+Projects:
+- CRpilot: Smart room allocation and scheduling solution
+- HealNest: Health-focused digital solution
+- WiFiSense-Lite: Networking-oriented project
+- Alumni Networking System: Directory and networking platform
+
+Contact:
+- Email: arifshahriar85204@gmail.com

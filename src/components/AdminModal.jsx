@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Lock, Eye, EyeOff, X, Plus, Trash2, Edit3, CheckCircle, RefreshCw, LogOut, BookOpen, Trophy, Code2 } from 'lucide-react';
-import { supabase, computeSHA256 } from '../lib/supabase';
-
-const DEFAULT_PASS_HASH = import.meta.env.VITE_ADMIN_PASS_HASH || '9e6c69d9c081151935be2cb3090e4607a161cb3e6f09518264c5dae1dbc255d2';
+import { Shield, Lock, Eye, EyeOff, X, Plus, Trash2, Edit3, CheckCircle, RefreshCw, LogOut, BookOpen, Trophy, Code2, Mail, Key } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 export default function AdminModal({
   isOpen,
@@ -17,7 +15,10 @@ export default function AdminModal({
   setPosts = () => {}
 }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [adminUser, setAdminUser] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState('');
   const [activeTab, setActiveTab] = useState('profile');
@@ -60,7 +61,6 @@ export default function AdminModal({
   const [newSkillName, setNewSkillName] = useState('');
 
   // Password Change
-  const [currPass, setCurrPass] = useState('');
   const [newPass, setNewPass] = useState('');
   const [passMsg, setPassMsg] = useState({ type: '', text: '' });
 
@@ -69,11 +69,42 @@ export default function AdminModal({
     if (profile) setProfForm({ ...profile });
   }, [profile]);
 
-  // Check existing session
+  // Monitor Supabase Auth session & state changes
   useEffect(() => {
-    if (sessionStorage.getItem('ADMIN_AUTH') === 'true') {
-      setIsAuthenticated(true);
+    let mounted = true;
+
+    async function checkExistingSession() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (mounted && session?.user) {
+          setIsAuthenticated(true);
+          setAdminUser(session.user);
+          if (session.user.email) setEmail(session.user.email);
+        }
+      } catch (err) {
+        console.warn('Supabase session check notice:', err);
+      }
     }
+
+    checkExistingSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (mounted) {
+        if (session?.user) {
+          setIsAuthenticated(true);
+          setAdminUser(session.user);
+          if (session.user.email) setEmail(session.user.email);
+        } else {
+          setIsAuthenticated(false);
+          setAdminUser(null);
+        }
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   if (!isOpen) return null;
@@ -86,25 +117,45 @@ export default function AdminModal({
   const handleLogin = async (e) => {
     e.preventDefault();
     setAuthError('');
+    setIsLoggingIn(true);
 
-    const inputHash = await computeSHA256(password);
-    const storedHash = localStorage.getItem('ADMIN_PASS_HASH') || DEFAULT_PASS_HASH;
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: password
+      });
 
-    if (inputHash === storedHash) {
-      sessionStorage.setItem('ADMIN_AUTH', 'true');
-      setIsAuthenticated(true);
-      setPassword('');
-      showToast('✓ Welcome, Arif! Admin Console unlocked.');
-    } else {
-      setAuthError('Incorrect master security password.');
+      if (error) {
+        setAuthError(error.message || 'Invalid credentials.');
+        setIsLoggingIn(false);
+        return;
+      }
+
+      if (data?.session) {
+        setIsAuthenticated(true);
+        setAdminUser(data.user);
+        setPassword('');
+        showToast(`✓ Welcome! Authenticated as ${data.user.email}`);
+      }
+    } catch (err) {
+      setAuthError(err.message || 'Authentication error.');
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
-  const handleLogout = () => {
-    sessionStorage.removeItem('ADMIN_AUTH');
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.warn('Sign out notice:', err);
+    }
     setIsAuthenticated(false);
+    setAdminUser(null);
+    setPassword('');
     onClose();
   };
+
 
   // 1. Save Profile
   const handleSaveProfile = async (e) => {
@@ -113,12 +164,16 @@ export default function AdminModal({
     localStorage.setItem('CACHED_PROFILE', JSON.stringify(profForm));
 
     try {
-      await supabase.from('profile').upsert({ id: 1, ...profForm, updated_at: new Date().toISOString() });
+      const { error } = await supabase.from('profile').upsert({ id: 1, ...profForm, updated_at: new Date().toISOString() });
+      if (error) {
+        showToast('⚠️ Supabase error: ' + error.message);
+        return;
+      }
+      showToast('✓ Profile updated successfully and published live!');
     } catch (err) {
       console.warn('Supabase profile sync notice:', err);
+      showToast('✓ Profile saved locally.');
     }
-
-    showToast('✓ Profile updated successfully and published live!');
   };
 
   // 2. Save Project
@@ -151,12 +206,16 @@ export default function AdminModal({
     setIsEditingProject(false);
 
     try {
-      await supabase.from('projects').upsert(projectPayload);
+      const { error } = await supabase.from('projects').upsert(projectPayload);
+      if (error) {
+        showToast('⚠️ Supabase error: ' + error.message);
+        return;
+      }
+      showToast('✓ Project saved successfully!');
     } catch (err) {
       console.warn('Supabase project sync notice:', err);
+      showToast('✓ Project saved locally.');
     }
-
-    showToast('✓ Project saved successfully!');
   };
 
   const handleDeleteProject = async (id) => {
@@ -166,12 +225,15 @@ export default function AdminModal({
     localStorage.setItem('CACHED_PROJECTS', JSON.stringify(updated));
 
     try {
-      await supabase.from('projects').delete().eq('id', id);
+      const { error } = await supabase.from('projects').delete().eq('id', id);
+      if (error) {
+        showToast('⚠️ Supabase delete error: ' + error.message);
+        return;
+      }
+      showToast('✓ Project deleted.');
     } catch (err) {
       console.warn('Supabase delete notice:', err);
     }
-
-    showToast('✓ Project deleted.');
   };
 
   const handleEditProject = (p) => {
@@ -213,12 +275,16 @@ export default function AdminModal({
     setIsEditingPost(false);
 
     try {
-      await supabase.from('posts').upsert(postPayload);
+      const { error } = await supabase.from('posts').upsert(postPayload);
+      if (error) {
+        showToast('⚠️ Supabase error: ' + error.message);
+        return;
+      }
+      showToast('✓ Story / Experience published successfully!');
     } catch (err) {
       console.warn('Supabase post sync notice:', err);
+      showToast('✓ Story saved locally.');
     }
-
-    showToast('✓ Story / Experience published successfully!');
   };
 
   const handleDeletePost = async (id) => {
@@ -228,12 +294,15 @@ export default function AdminModal({
     localStorage.setItem('CACHED_POSTS', JSON.stringify(updated));
 
     try {
-      await supabase.from('posts').delete().eq('id', id);
+      const { error } = await supabase.from('posts').delete().eq('id', id);
+      if (error) {
+        showToast('⚠️ Supabase post delete error: ' + error.message);
+        return;
+      }
+      showToast('✓ Story deleted.');
     } catch (err) {
       console.warn('Supabase post delete notice:', err);
     }
-
-    showToast('✓ Story deleted.');
   };
 
   const handleEditPost = (p) => {
@@ -257,12 +326,15 @@ export default function AdminModal({
     setNewSkillName('');
 
     try {
-      await supabase.from('skills').upsert(newSkill);
+      const { error } = await supabase.from('skills').upsert(newSkill);
+      if (error) {
+        showToast('⚠️ Supabase error: ' + error.message);
+        return;
+      }
+      showToast(`✓ Added skill "${newSkill.name}"`);
     } catch (err) {
       console.warn('Supabase skill sync notice:', err);
     }
-
-    showToast(`✓ Added skill "${newSkill.name}"`);
   };
 
   const handleDeleteSkill = async (skill) => {
@@ -271,37 +343,40 @@ export default function AdminModal({
     localStorage.setItem('CACHED_SKILLS', JSON.stringify(updated));
 
     try {
-      if (skill.id) await supabase.from('skills').delete().eq('id', skill.id);
+      if (skill.id) {
+        const { error } = await supabase.from('skills').delete().eq('id', skill.id);
+        if (error) {
+          showToast('⚠️ Supabase error: ' + error.message);
+          return;
+        }
+      }
+      showToast(`✓ Removed skill "${skill.name}"`);
     } catch (err) {
       console.warn('Supabase skill delete notice:', err);
     }
-
-    showToast(`✓ Removed skill "${skill.name}"`);
   };
 
-  // 5. Change Master Password
+  // 5. Change Password via Supabase Auth
   const handleChangePassword = async (e) => {
     e.preventDefault();
     setPassMsg({ type: '', text: '' });
-
-    const currHash = await computeSHA256(currPass);
-    const expected = localStorage.getItem('ADMIN_PASS_HASH') || DEFAULT_PASS_HASH;
-
-    if (currHash !== expected) {
-      setPassMsg({ type: 'error', text: 'Current password is incorrect.' });
-      return;
-    }
 
     if (newPass.length < 6) {
       setPassMsg({ type: 'error', text: 'New password must be at least 6 characters.' });
       return;
     }
 
-    const newHash = await computeSHA256(newPass);
-    localStorage.setItem('ADMIN_PASS_HASH', newHash);
-    setPassMsg({ type: 'success', text: '✓ Master password changed successfully!' });
-    setCurrPass('');
-    setNewPass('');
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPass });
+      if (error) {
+        setPassMsg({ type: 'error', text: error.message });
+        return;
+      }
+      setPassMsg({ type: 'success', text: '✓ Password updated in Supabase Cloud Authentication!' });
+      setNewPass('');
+    } catch (err) {
+      setPassMsg({ type: 'error', text: err.message || 'Failed to update password.' });
+    }
   };
 
   return (
@@ -328,36 +403,75 @@ export default function AdminModal({
             </div>
 
             <h2 className="text-2xl font-black text-white tracking-tight mb-2">Restricted Console</h2>
-            <p className="text-xs text-slate-400 mb-6">Enter master security password to access system controls.</p>
+            <p className="text-xs text-slate-400 mb-6">Enter verified Supabase Admin credentials to access controls.</p>
 
             <form onSubmit={handleLogin} className="space-y-4">
-              <div className="relative text-left">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter password..."
-                  className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-cyan-500/30 text-white text-sm outline-none focus:border-cyan-400 pr-10"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3.5 text-slate-400 hover:text-white cursor-pointer"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
+              <div className="text-left">
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Admin Email</label>
+                <div className="relative">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@example.com"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-cyan-500/30 text-white text-sm outline-none focus:border-cyan-400 pl-10"
+                    required
+                  />
+                  <Mail className="w-4 h-4 text-cyan-400 absolute left-3.5 top-3.5" />
+                </div>
               </div>
 
-              {authError && <p className="text-xs font-semibold text-rose-400">{authError}</p>}
+              <div className="text-left">
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Password</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••••••"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-cyan-500/30 text-white text-sm outline-none focus:border-cyan-400 pl-10 pr-10"
+                    required
+                  />
+                  <Lock className="w-4 h-4 text-cyan-400 absolute left-3.5 top-3.5" />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3.5 text-slate-400 hover:text-white cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {authError && (
+                <div className="p-3 rounded-xl bg-rose-950/60 border border-rose-500/30 text-xs font-medium text-rose-300 text-left">
+                  ⚠️ {authError}
+                </div>
+              )}
 
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl font-bold text-sm bg-[#12a9dc] hover:bg-[#0fa0d1] text-white transition-all shadow-[0_0_20px_rgba(18,169,220,0.3)] cursor-pointer"
+                disabled={isLoggingIn}
+                className="w-full py-3 rounded-xl font-bold text-sm bg-[#12a9dc] hover:bg-[#0fa0d1] text-white transition-all shadow-[0_0_20px_rgba(18,169,220,0.3)] cursor-pointer disabled:opacity-60 flex items-center justify-center gap-2"
               >
-                Unlock Console
+                {isLoggingIn ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>Verifying Credentials...</span>
+                  </>
+                ) : (
+                  <>
+                    <Key className="w-4 h-4" />
+                    <span>Unlock Secure Console</span>
+                  </>
+                )}
               </button>
             </form>
+
+            <div className="pt-4 mt-4 border-t border-cyan-500/10 text-[11px] text-slate-400 flex items-center justify-center gap-1.5">
+              <Shield className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Protected by Supabase Auth & PostgreSQL Row Level Security</span>
+            </div>
           </div>
         </div>
       ) : (
@@ -994,45 +1108,45 @@ export default function AdminModal({
               {/* TAB 5: SETTINGS */}
               {activeTab === 'settings' && (
                 <div className="space-y-6">
-                  {/* Supabase Status */}
+                  {/* Supabase Status & Identity */}
                   <div className="p-5 rounded-2xl bg-[#0b2433] border border-cyan-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                      <h4 className="text-base font-bold text-white mb-1">Supabase PostgreSQL Connection</h4>
-                      <p className="text-xs text-slate-400">Database ID: <code className="text-cyan-400">vadqmzthctvykdgeqqqu</code></p>
+                      <h4 className="text-base font-bold text-white mb-1">Supabase Cloud Authentication</h4>
+                      <p className="text-xs text-slate-300">
+                        Authenticated Admin: <code className="text-cyan-400 font-bold">{adminUser?.email || 'Active User Session'}</code>
+                      </p>
+                      <p className="text-[11px] text-slate-400 mt-1">
+                        Database Project ID: <code className="text-slate-300">vadqmzthctvykdgeqqqu</code>
+                      </p>
                     </div>
-                    <span className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-500/30 self-start sm:self-center">
-                      ● Cloud Database Connected & Active
-                    </span>
+                    <div className="flex flex-col sm:items-end gap-1.5">
+                      <span className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-500/30 self-start sm:self-auto">
+                        ● PostgreSQL RLS Protected
+                      </span>
+                      <span className="text-[10px] text-slate-400">JWT Token Authenticated</span>
+                    </div>
                   </div>
 
-                  {/* Change Master Password */}
+                  {/* Change Password in Supabase Cloud Auth */}
                   <form onSubmit={handleChangePassword} className="p-6 rounded-2xl bg-[#0b2433] border border-cyan-500/20 space-y-4">
-                    <h4 className="text-base font-bold text-white">🔐 Change Master Password</h4>
-                    <p className="text-xs text-slate-400">Update your console access credentials. Encrypted via SHA-256.</p>
+                    <h4 className="text-base font-bold text-white flex items-center gap-2">
+                      <Lock className="w-4 h-4 text-cyan-400" />
+                      <span>Update Cloud Admin Password</span>
+                    </h4>
+                    <p className="text-xs text-slate-400">
+                      Directly changes your verified password in Supabase Authentication. Next time you login, use this new password.
+                    </p>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-slate-300 mb-1">Current Password</label>
-                        <input
-                          type="password"
-                          value={currPass}
-                          onChange={(e) => setCurrPass(e.target.value)}
-                          placeholder="Current password"
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-slate-300 mb-1">New Password (min 6 chars)</label>
-                        <input
-                          type="password"
-                          value={newPass}
-                          onChange={(e) => setNewPass(e.target.value)}
-                          placeholder="New password"
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs"
-                          required
-                        />
-                      </div>
+                    <div className="max-w-md">
+                      <label className="block text-xs font-bold text-slate-300 mb-1">New Password (minimum 6 characters)</label>
+                      <input
+                        type="password"
+                        value={newPass}
+                        onChange={(e) => setNewPass(e.target.value)}
+                        placeholder="Enter new strong password"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs outline-none focus:border-cyan-400"
+                        required
+                      />
                     </div>
 
                     {passMsg.text && (
@@ -1043,9 +1157,9 @@ export default function AdminModal({
 
                     <button
                       type="submit"
-                      className="px-5 py-2.5 rounded-xl text-xs font-bold bg-cyan-400 hover:bg-cyan-300 text-slate-950 cursor-pointer"
+                      className="px-5 py-2.5 rounded-xl text-xs font-bold bg-cyan-400 hover:bg-cyan-300 text-slate-950 transition-colors cursor-pointer"
                     >
-                      Update Password
+                      Update Supabase Password
                     </button>
                   </form>
                 </div>

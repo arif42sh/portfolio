@@ -64,22 +64,58 @@ ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.skills ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.posts ENABLE ROW LEVEL SECURITY;
 
--- 6. Policies for Read and Write
+-- 6. Clean up old policies
 DROP POLICY IF EXISTS "Public can view profile" ON public.profile;
 DROP POLICY IF EXISTS "Admin can update profile" ON public.profile;
-CREATE POLICY "Full access to profile" ON public.profile FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Full access to profile" ON public.profile;
+DROP POLICY IF EXISTS "Public read profile" ON public.profile;
+DROP POLICY IF EXISTS "Authenticated admin write profile" ON public.profile;
 
 DROP POLICY IF EXISTS "Public can view projects" ON public.projects;
 DROP POLICY IF EXISTS "Admin can manage projects" ON public.projects;
-CREATE POLICY "Full access to projects" ON public.projects FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Full access to projects" ON public.projects;
+DROP POLICY IF EXISTS "Public read projects" ON public.projects;
+DROP POLICY IF EXISTS "Authenticated admin write projects" ON public.projects;
 
 DROP POLICY IF EXISTS "Public can view skills" ON public.skills;
 DROP POLICY IF EXISTS "Admin can manage skills" ON public.skills;
-CREATE POLICY "Full access to skills" ON public.skills FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Full access to skills" ON public.skills;
+DROP POLICY IF EXISTS "Public read skills" ON public.skills;
+DROP POLICY IF EXISTS "Authenticated admin write skills" ON public.skills;
 
 DROP POLICY IF EXISTS "Public can view posts" ON public.posts;
 DROP POLICY IF EXISTS "Admin can manage posts" ON public.posts;
-CREATE POLICY "Full access to posts" ON public.posts FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Full access to posts" ON public.posts;
+DROP POLICY IF EXISTS "Public read posts" ON public.posts;
+DROP POLICY IF EXISTS "Authenticated admin write posts" ON public.posts;
+
+-- 7. Secure Row Level Security (RLS) Policies
+-- Public Visitors: Can ONLY view (SELECT)
+CREATE POLICY "Public read profile" ON public.profile
+  FOR SELECT USING (true);
+
+CREATE POLICY "Public read projects" ON public.projects
+  FOR SELECT USING (true);
+
+CREATE POLICY "Public read skills" ON public.skills
+  FOR SELECT USING (true);
+
+CREATE POLICY "Public read posts" ON public.posts
+  FOR SELECT USING (true);
+
+-- Authenticated Users (Logged in via Supabase Auth): Can insert, update, delete
+CREATE POLICY "Authenticated admin write profile" ON public.profile
+  FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+CREATE POLICY "Authenticated admin write projects" ON public.projects
+  FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+CREATE POLICY "Authenticated admin write skills" ON public.skills
+  FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+CREATE POLICY "Authenticated admin write posts" ON public.posts
+  FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
 
 -- 7. Seed Initial Data (Matching your current portfolio)
 INSERT INTO public.profile (id, name, eyebrow, hero_sub, currently_exploring, profile_image, email, github_url)
@@ -196,4 +232,22 @@ ON CONFLICT (id) DO NOTHING;
 DROP POLICY IF EXISTS "Public can view portfolio assets" ON storage.objects;
 DROP POLICY IF EXISTS "Admin can upload portfolio assets" ON storage.objects;
 DROP POLICY IF EXISTS "Full access to portfolio assets" ON storage.objects;
-CREATE POLICY "Full access to portfolio assets" ON storage.objects FOR ALL USING (bucket_id = 'portfolio-assets') WITH CHECK (bucket_id = 'portfolio-assets');
+DROP POLICY IF EXISTS "Public view portfolio assets" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated admin upload assets" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated admin update assets" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated admin delete assets" ON storage.objects;
+
+-- Anyone can view portfolio images
+CREATE POLICY "Public view portfolio assets" ON storage.objects
+  FOR SELECT USING (bucket_id = 'portfolio-assets');
+
+-- Only authenticated admin can upload, update, or delete images
+CREATE POLICY "Authenticated admin upload assets" ON storage.objects
+  FOR INSERT TO authenticated WITH CHECK (bucket_id = 'portfolio-assets');
+
+CREATE POLICY "Authenticated admin update assets" ON storage.objects
+  FOR UPDATE TO authenticated USING (bucket_id = 'portfolio-assets');
+
+CREATE POLICY "Authenticated admin delete assets" ON storage.objects
+  FOR DELETE TO authenticated USING (bucket_id = 'portfolio-assets');
+

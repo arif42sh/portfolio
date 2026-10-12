@@ -1,0 +1,170 @@
+{
+    "profile": {
+        "name": "Arif Shahriar",
+        "eyebrow": "CSE Student \u2022 Cyber Security Enthusiast \u2022 AI & Software Developer",
+        "hero_sub": "I am passionate about Cyber Security, AI, software Development, and creating practical solutions with various technologies.",
+        "currently_exploring": "Networking Fundamentals & Linux Security",
+        "profile_image": "profile.png",
+        "resume_url": "resume.txt",
+        "email": "arifshahriar85204@gmail.com",
+        "github_url": "https://github.com/arif42sh",
+        "linkedin_url": "https://www.linkedin.com",
+        "facebook_url": "https://facebook.com",
+        "updated_at": "2026-10-12T06:34:55.688Z"
+    },
+    "projects": [
+        {
+            "id": 1,
+            "title": "CRpilot",
+            "badge": "AI-Driven Scheduling",
+            "description": "Smart room allocation and scheduling platform built to simplify coordination and improve planning.",
+            "tech_stack": [
+                "Java",
+                "PHP",
+                "Android",
+                "MySQL"
+            ],
+            "bullets": [
+                "Real-time room booking",
+                "Teacher tracking",
+                "Smart scheduling logic"
+            ],
+            "image_url": "ChatGPT Image Mar 16, 2026, 10_47_28 AM.png",
+            "github_url": "#contact",
+            "demo_url": "#contact",
+            "order_index": 1
+        },
+        {
+            "id": 2,
+            "title": "HealNest",
+            "badge": "Healthcare App",
+            "description": "A care-centered solution focused on health support, organization, and accessible digital experience.",
+            "tech_stack": [
+                "Java",
+                "Android",
+                "Firebase"
+            ],
+            "bullets": [
+                "Health workflow support",
+                "Structured digital records",
+                "Improved care visibility"
+            ],
+            "image_url": "",
+            "github_url": "#contact",
+            "demo_url": "#contact",
+            "order_index": 2
+        },
+        {
+            "id": 3,
+            "title": "WiFiSense-Lite",
+            "badge": "Networking Tool",
+            "description": "A practical networking-oriented project built to understand connectivity, monitoring, and system behavior.",
+            "tech_stack": [
+                "Python",
+                "Networking",
+                "Linux"
+            ],
+            "bullets": [
+                "Network awareness",
+                "Useful diagnostics",
+                "Hands-on learning project"
+            ],
+            "image_url": "",
+            "github_url": "#contact",
+            "demo_url": "#contact",
+            "order_index": 3
+        },
+        {
+            "id": 4,
+            "title": "Alumni Networking System",
+            "badge": "Directory System",
+            "description": "A directory-style platform for alumni connections, profile discovery, and structured communication.",
+            "tech_stack": [
+                "PHP",
+                "MySQL",
+                "Web"
+            ],
+            "bullets": [
+                "Profile-based directory",
+                "Search and networking support",
+                "Database-backed structure"
+            ],
+            "image_url": "",
+            "github_url": "#contact",
+            "demo_url": "#contact",
+            "order_index": 4
+        }
+    ],
+    "skills": [
+        {
+            "id": 1,
+            "category": "Languages",
+            "name": "C++"
+        },
+        {
+            "id": 2,
+            "category": "Languages",
+            "name": "Python"
+        },
+        {
+            "id": 3,
+            "category": "Languages",
+            "name": "Java"
+        },
+        {
+            "id": 4,
+            "category": "Languages",
+            "name": "JavaScript"
+        },
+        {
+            "id": 5,
+            "category": "Frameworks",
+            "name": "React"
+        },
+        {
+            "id": 6,
+            "category": "Frameworks",
+            "name": "PHP"
+        },
+        {
+            "id": 8,
+            "category": "Database",
+            "name": "MySQL"
+        },
+        {
+            "id": 9,
+            "category": "Database",
+            "name": "Firebase"
+        },
+        {
+            "id": 10,
+            "category": "Database",
+            "name": "Supabase"
+        },
+        {
+            "id": 11,
+            "category": "Tools",
+            "name": "Git"
+        },
+        {
+            "id": 12,
+            "category": "Tools",
+            "name": "GitHub"
+        },
+        {
+            "id": 13,
+            "category": "Tools",
+            "name": "VS Code"
+        },
+        {
+            "id": 14,
+            "category": "Machine Learning",
+            "name": "Python"
+        },
+        {
+            "id": 15,
+            "category": "Machine Learning",
+            "name": "Data Analysis"
+        }
+    ]
+}

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Console | Arif Shahriar Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- Authentication Gate (Locked by default) -->
+  <div class="auth-gate" id="authGate">
+    <div class="auth-box">
+      <div class="auth-icon">🛡️</div>
+      <h2 class="auth-title">Restricted Console</h2>
+      <p class="auth-subtitle">Arif Shahriar Portfolio Admin. Enter master security password to access system controls.</p>
+      <form id="authForm">
+        <div class="form-group" style="text-align: left;">
+          <label for="masterPassword">Master Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="masterPassword" placeholder="Enter password..." required autocomplete="current-password">
+            <button type="button" id="togglePasswordVisibility" class="btn-eye" aria-label="Toggle password visibility">👁️</button>
+          </div>
+        </div>
+        <p class="auth-error" id="authError"></p>
+        <button type="submit" class="btn-primary auth-submit-btn" id="authSubmitBtn">Unlock Console</button>
+      </form>
+      <a href="index.html" class="auth-back-link">← Return to Portfolio</a>
+    </div>
+  </div>
+
+  <!-- Top Header -->
+  <header class="admin-header" id="adminHeader" style="display: none;">
+    <div class="header-inner">
+      <div class="admin-brand">
+        <span class="brand-dot"></span>
+        <div class="admin-title">Arif Shahriar <span>Admin Console</span></div>
+      </div>
+
+      <div class="header-actions">
+        <span class="status-badge" id="connectionStatus">● Checking Database...</span>
+        <a href="index.html" class="btn-ghost" target="_blank">🌐 View Portfolio</a>
+        <button class="btn-ghost" id="lockConsoleBtn" title="Lock and logout">🔒 Lock</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Layout -->
+  <div class="admin-layout" id="adminLayout" style="display: none;">
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+      <button class="nav-tab-btn active" data-tab="tab-profile">👤 Profile & Hero</button>
+      <button class="nav-tab-btn" data-tab="tab-projects">🚀 Projects</button>
+      <button class="nav-tab-btn" data-tab="tab-skills">⚡ Skills</button>
+      <button class="nav-tab-btn" data-tab="tab-settings">⚙️ Supabase Setup</button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+
+      <!-- TAB 1: Profile & Hero -->
+      <section class="tab-pane active" id="tab-profile">
+        <div class="admin-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">👤 Profile & Hero Information</h2>
+              <p class="card-desc">Update your headline, bio, currently exploring line, and contact links.</p>
+            </div>
+            <button class="btn-primary" id="saveProfileBtn">Save Profile</button>
+          </div>
+
+          <form id="profileForm">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="profName">Full Name</label>
+                <input type="text" id="profName" required>
+              </div>
+
+              <div class="form-group">
+                <label for="profEyebrow">Hero Eyebrow (Subtitle above name)</label>
+                <input type="text" id="profEyebrow">
+              </div>
+
+              <div class="form-group full">
+                <label for="profHeroSub">Hero Description (Bio text)</label>
+                <textarea id="profHeroSub" rows="3"></textarea>
+              </div>
+
+              <div class="form-group full">
+                <label for="profExploring">Currently Exploring (Typewriter Line)</label>
+                <input type="text" id="profExploring">
+                <span class="help-text">This will be shown in the hero section animation.</span>
+              </div>
+
+              <div class="form-group">
+                <label for="profEmail">Contact Email</label>
+                <input type="email" id="profEmail">
+              </div>
+
+              <div class="form-group">
+                <label for="profGithub">GitHub Profile URL</label>
+                <input type="url" id="profGithub">
+              </div>
+
+              <div class="form-group">
+                <label for="profLinkedin">LinkedIn Profile URL</label>
+                <input type="url" id="profLinkedin">
+              </div>
+
+              <div class="form-group">
+                <label for="profResume">Resume URL or File Path</label>
+                <input type="text" id="profResume">
+              </div>
+
+              <div class="form-group full">
+                <label for="profImageFile">Update Profile Picture (Upload to Cloud Storage)</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <input type="file" id="profImageFile" accept="image/*">
+                  <button type="button" class="btn-ghost" id="uploadAvatarBtn">Upload Photo</button>
+                </div>
+                <input type="hidden" id="profImageUrl">
+                <span class="help-text" id="avatarUploadStatus">Current: profile.png</span>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- TAB 2: Projects Manager -->
+      <section class="tab-pane" id="tab-projects">
+        <div class="admin-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">🚀 Featured Projects Manager</h2>
+              <p class="card-desc">Add, edit, or delete projects shown on your portfolio.</p>
+            </div>
+            <button class="btn-primary" id="openNewProjectModalBtn">+ Add Project</button>
+          </div>
+
+          <div class="project-list-admin" id="adminProjectsList">
+            <!-- Dynamically populated -->
+            <p style="color: var(--admin-muted);">Loading projects...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: Skills Manager -->
+      <section class="tab-pane" id="tab-skills">
+        <div class="admin-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">⚡ Skills & Technologies</h2>
+              <p class="card-desc">Manage tech stacks grouped by category.</p>
+            </div>
+          </div>
+
+          <!-- Add Skill Bar -->
+          <div style="display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;">
+            <select id="newSkillCategory" style="width: 200px;">
+              <option value="Languages">Languages</option>
+              <option value="Frameworks">Frameworks</option>
+              <option value="Database">Database</option>
+              <option value="Tools">Tools</option>
+              <option value="Machine Learning">Machine Learning</option>
+            </select>
+            <input type="text" id="newSkillName" placeholder="Skill name (e.g. Docker, TypeScript)" style="flex: 1; min-width: 200px;">
+            <button class="btn-primary" id="addSkillBtn">+ Add Skill</button>
+          </div>
+
+          <div id="adminSkillsContainer">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: Supabase Connection Setup -->
+      <section class="tab-pane" id="tab-settings">
+        <div class="admin-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">⚙️ Supabase (PostgreSQL & Storage) Setup</h2>
+              <p class="card-desc">Connect your cloud database in 2 minutes.</p>
+            </div>
+            <button class="btn-primary" id="saveSupabaseConfigBtn">Save & Connect</button>
+          </div>
+
+          <div class="form-group">
+            <label for="cfgSupabaseUrl">Supabase Project URL</label>
+            <input type="url" id="cfgSupabaseUrl" value="https://vadqmzthctvykdgeqqqu.supabase.co" placeholder="https://vadqmzthctvykdgeqqqu.supabase.co">
+            <span class="help-text">Found in your Supabase Dashboard → Settings → API → Project URL</span>
+          </div>
+
+          <div class="form-group">
+            <label for="cfgSupabaseKey">Supabase Anon Public Key</label>
+            <input type="text" id="cfgSupabaseKey" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhZHFtenRoY3R2eWtkZ2VxcXF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE3ODMwNzksImV4cCI6MjEwNzM1OTA3OX0.PN4DUz-SMcYkJ8grxBwk_ejXiYbwERUKx-OltH1pSs0">
+            <span class="help-text">Found in Supabase Dashboard → Settings → API → Project API Keys (anon public)</span>
+          </div>
+
+          <div style="margin-top: 24px; padding: 18px; border-radius: 12px; background: rgba(32, 183, 231, 0.05); border: 1px solid rgba(32, 183, 231, 0.2);">
+            <h3 style="font-size: 1.05rem; margin-bottom: 8px; color: var(--admin-accent);">📋 Easy Step-by-Step Setup Guide:</h3>
+            <ol style="margin-left: 20px; line-height: 1.8; color: #cbd5e1; font-size: 0.92rem;">
+              <li>Go to <a href="https://supabase.com" target="_blank" style="color: var(--admin-accent); text-decoration: underline;">supabase.com</a> and Sign In with your GitHub account (Free).</li>
+              <li>Click <strong>New Project</strong>, give it a name (e.g., <code>portfolio-db</code>) and set a database password.</li>
+              <li>In the left sidebar, click <strong>SQL Editor</strong> → click <strong>New Query</strong>.</li>
+              <li>Open your project's <a href="schema.sql" target="_blank" style="color: var(--admin-accent); text-decoration: underline;">schema.sql</a> file, copy all the code, paste it into Supabase SQL Editor and click <strong>Run</strong>.</li>
+              <li>Go to <strong>Project Settings</strong> (gear icon) → <strong>API</strong> → Copy the <strong>Project URL</strong> and <strong>anon public key</strong>, paste them above, and click <strong>Save & Connect</strong>!</li>
+            </ol>
+          </div>
+
+          <!-- Change Master Password Section -->
+          <div style="margin-top: 24px; padding: 20px; border-radius: 14px; background: rgba(5, 19, 28, 0.8); border: 1px solid var(--admin-border);">
+            <h3 style="font-size: 1.1rem; margin-bottom: 4px; color: #fff;">🔐 Change Master Password</h3>
+            <p class="card-desc" style="margin-bottom: 14px;">Update the password used to unlock this Admin Console.</p>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="currentMasterPass">Current Password</label>
+                <input type="password" id="currentMasterPass" placeholder="Enter current password">
+              </div>
+              <div class="form-group">
+                <label for="newMasterPass">New Password (minimum 6 characters)</label>
+                <input type="password" id="newMasterPass" placeholder="Enter new password">
+              </div>
+            </div>
+            <button class="btn-primary" id="changePasswordBtn" style="margin-top: 8px;">Update Password</button>
+            <p id="changePassStatus" style="margin-top: 8px; font-size: 0.88rem; font-weight: 600; min-height: 20px;"></p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Modal: Add / Edit Project -->
+  <div class="modal-overlay" id="projectModal">
+    <div class="modal-box">
+      <div class="card-header">
+        <h3 class="card-title" id="modalTitle">Add New Project</h3>
+        <button class="btn-ghost" id="closeModalBtn">✕</button>
+      </div>
+
+      <form id="projectForm">
+        <input type="hidden" id="projId">
+
+        <div class="form-group">
+          <label for="projTitle">Project Title</label>
+          <input type="text" id="projTitle" placeholder="e.g. CRpilot, HealNest" required>
+        </div>
+
+        <div class="form-group">
+          <label for="projBadge">Category Badge</label>
+          <input type="text" id="projBadge" placeholder="e.g. AI-Driven Scheduling, Security Tool">
+        </div>
+
+        <div class="form-group">
+          <label for="projDesc">Short Description</label>
+          <textarea id="projDesc" rows="3" placeholder="Brief summary of the project..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="projTechStack">Tech Stack (comma separated)</label>
+          <input type="text" id="projTechStack" placeholder="Java, PHP, Android, MySQL">
+        </div>
+
+        <div class="form-group">
+          <label for="projBullets">Key Features / Bullets (comma or newline separated)</label>
+          <textarea id="projBullets" rows="3" placeholder="Real-time booking, Smart scheduling, etc."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="projImageFile">Thumbnail Image (Upload to Cloud Storage or paste URL)</label>
+          <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+            <input type="file" id="projImageFile" accept="image/*">
+            <button type="button" class="btn-ghost" id="uploadProjImgBtn">Upload</button>
+          </div>
+          <input type="text" id="projImageUrl" placeholder="Or image URL / filename">
+          <span class="help-text" id="projImgUploadStatus"></span>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="projGithub">GitHub Link</label>
+            <input type="text" id="projGithub" placeholder="https://github.com/...">
+          </div>
+
+          <div class="form-group">
+            <label for="projDemo">Live Demo / Case Study Link</label>
+            <input type="text" id="projDemo" placeholder="https://...">
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn-ghost" id="cancelModalBtn">Cancel</button>
+          <button type="submit" class="btn-primary" id="saveProjectBtn">Save Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-notice" id="toastNotice"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

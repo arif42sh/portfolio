@@ -103,7 +103,7 @@ export default function Contact({ profile }) {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="Arif Shahriar"
-                    className="w-full px-4 py-3 rounded-xl bg-white/90 border border-[#cbd4e7] focus:border-[#405f9f] focus:ring-2 focus:ring-[#405f9f]/20 text-[#1d2a44] placeholder-[#8a9bb5] text-sm outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-white/90 border border-[#cbd4e7] focus:border-[#405f9f] focus:ring-2 focus:ring-[#405f9f]/20 text-[#1d2a44] placeholder-[#8a9bb5] text-base sm:text-sm outline-none transition-all"
                     required
                   />
                 </div>
@@ -118,7 +118,7 @@ export default function Contact({ profile }) {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="you@example.com"
-                    className="w-full px-4 py-3 rounded-xl bg-white/90 border border-[#cbd4e7] focus:border-[#405f9f] focus:ring-2 focus:ring-[#405f9f]/20 text-[#1d2a44] placeholder-[#8a9bb5] text-sm outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-white/90 border border-[#cbd4e7] focus:border-[#405f9f] focus:ring-2 focus:ring-[#405f9f]/20 text-[#1d2a44] placeholder-[#8a9bb5] text-base sm:text-sm outline-none transition-all"
                     required
                   />
                 </div>
@@ -133,7 +133,7 @@ export default function Contact({ profile }) {
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Tell me about your project or inquiry..."
-                    className="w-full px-4 py-3 rounded-xl bg-white/90 border border-[#cbd4e7] focus:border-[#405f9f] focus:ring-2 focus:ring-[#405f9f]/20 text-[#1d2a44] placeholder-[#8a9bb5] text-sm outline-none transition-all resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-white/90 border border-[#cbd4e7] focus:border-[#405f9f] focus:ring-2 focus:ring-[#405f9f]/20 text-[#1d2a44] placeholder-[#8a9bb5] text-base sm:text-sm outline-none transition-all resize-none"
                     required
                   ></textarea>
                 </div>

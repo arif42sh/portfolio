@@ -94,7 +94,7 @@ export default function Hero({ profile }) {
           <div className="lg:col-span-5 flex justify-center">
             <div className="relative group">
               {/* Asymmetric curved container */}
-              <div className="profile-asymmetric w-[290px] sm:w-[360px] md:w-[410px] h-[370px] sm:h-[420px] md:h-[450px] shadow-2xl">
+              <div className="profile-asymmetric w-[280px] max-w-full sm:w-[360px] md:w-[410px] h-[350px] sm:h-[420px] md:h-[450px] shadow-2xl">
                 <img
                   src={profile?.profile_image || 'profile.png'}
                   alt={profile?.name || 'Arif Shahriar portrait'}

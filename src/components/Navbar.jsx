@@ -101,7 +101,7 @@ export default function Navbar({ onOpenAdmin }) {
               key={link.name}
               href={link.href}
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3.5 py-2.5 rounded-xl text-sm font-semibold text-[#b7cad4] hover:text-[#20b7e7] hover:bg-[#20b7e7]/10"
+              className="block px-4 py-3 rounded-xl text-base font-semibold text-[#b7cad4] hover:text-[#20b7e7] hover:bg-[#20b7e7]/10 active:bg-[#20b7e7]/15 transition-all"
             >
               {link.name}
             </a>
@@ -112,9 +112,9 @@ export default function Navbar({ onOpenAdmin }) {
                 setMobileMenuOpen(false);
                 onOpenAdmin();
               }}
-              className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-[#20b7e7] bg-[#071d29] rounded-xl border border-[#20b7e7]/20"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-[#20b7e7] bg-[#071d29] rounded-xl border border-[#20b7e7]/20 active:bg-[#20b7e7]/10 transition-all"
             >
-              <Lock className="w-3.5 h-3.5" />
+              <Lock className="w-4 h-4" />
               <span>Admin Console</span>
             </button>
           </div>

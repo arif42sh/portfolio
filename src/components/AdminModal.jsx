@@ -190,9 +190,14 @@ export default function AdminModal({
       ? currentPost.tags.split(',').map((t) => t.trim()).filter(Boolean)
       : currentPost.tags;
 
+    const imagesArray = typeof currentPost.images === 'string'
+      ? currentPost.images.split(/[\n,]+/).map((s) => s.trim()).filter(Boolean)
+      : Array.isArray(currentPost.images) ? currentPost.images : [];
+
     const postPayload = {
       ...currentPost,
-      tags: tagsArray
+      tags: tagsArray,
+      images: imagesArray
     };
 
     let updatedPosts;
@@ -234,7 +239,8 @@ export default function AdminModal({
   const handleEditPost = (p) => {
     setCurrentPost({
       ...p,
-      tags: Array.isArray(p.tags) ? p.tags.join(', ') : p.tags || ''
+      tags: Array.isArray(p.tags) ? p.tags.join(', ') : p.tags || '',
+      images: Array.isArray(p.images) ? p.images.join('\n') : p.images || ''
     });
     setIsEditingPost(true);
   };
@@ -937,12 +943,12 @@ export default function AdminModal({
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-xs font-bold text-slate-300 mb-1">Cover Image Path / URL</label>
+                          <label className="block text-xs font-bold text-slate-300 mb-1">Primary Poster / Cover Image</label>
                           <input
                             type="text"
-                            value={currentPost.image_url}
+                            value={currentPost.image_url || ''}
                             onChange={(e) => setCurrentPost({ ...currentPost, image_url: e.target.value })}
-                            placeholder="ChatGPT Image... or URL"
+                            placeholder="Poster filename (e.g. poster.jpg) or URL"
                             className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs"
                           />
                         </div>
@@ -950,12 +956,28 @@ export default function AdminModal({
                           <label className="block text-xs font-bold text-slate-300 mb-1">Tags (comma separated)</label>
                           <input
                             type="text"
-                            value={currentPost.tags}
+                            value={currentPost.tags || ''}
                             onChange={(e) => setCurrentPost({ ...currentPost, tags: e.target.value })}
                             placeholder="Hackathon, Java, MySQL..."
                             className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs"
                           />
                         </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-300 mb-1">
+                          Multiple Gallery Photos (one per line or comma separated)
+                        </label>
+                        <textarea
+                          rows="2"
+                          value={currentPost.images || ''}
+                          onChange={(e) => setCurrentPost({ ...currentPost, images: e.target.value })}
+                          placeholder="team-photo.jpg&#10;certificate.png&#10;presentation.jpg"
+                          className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs"
+                        ></textarea>
+                        <p className="text-[11px] text-slate-400 mt-1">
+                          Tip: Add multiple photo filenames/URLs here. They will appear as a clickable gallery carousel in the blog reader!
+                        </p>
                       </div>
 
                       <button

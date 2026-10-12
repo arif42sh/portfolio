@@ -97,6 +97,7 @@ export const INITIAL_POSTS = [
     badge: 'Top 10 Finalist',
     summary: 'Collaborated in a high-intensity 36-hour sprint to build an automated conflict-free scheduling engine for educational institutions.',
     image_url: 'ChatGPT Image Mar 16, 2026, 10_47_28 AM.png',
+    images: ['ChatGPT Image Mar 16, 2026, 10_47_28 AM.png', 'profile.png'],
     content: 'Participating in the National Hackathon was an eye-opening experience in rapid problem decomposition and full-stack execution. Our team tackled institutional room conflicts and teacher scheduling bottlenecks. Over 36 hours, we designed an intelligent logic engine backed by Java, PHP, and MySQL, presenting a working prototype to the judging panel and securing a top finalist position. Key lessons included agile task division, real-time database indexing, and defensive error handling under time constraints.',
     tags: ['Hackathon', 'Java', 'Full-Stack', 'Algorithm Design']
   },

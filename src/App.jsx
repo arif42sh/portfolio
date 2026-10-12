@@ -29,8 +29,22 @@ export default function App() {
   });
 
   const [posts, setPosts] = useState(() => {
-    const cached = localStorage.getItem('CACHED_POSTS');
-    return cached ? JSON.parse(cached) : INITIAL_POSTS;
+    try {
+      const cached = localStorage.getItem('CACHED_POSTS');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        return parsed.map((p) => {
+          const init = INITIAL_POSTS.find((i) => i.id === p.id);
+          return {
+            ...p,
+            images: Array.isArray(p.images) && p.images.length > 0 ? p.images : (init?.images || (p.image_url ? [p.image_url] : []))
+          };
+        });
+      }
+    } catch {
+      // fallback to INITIAL_POSTS
+    }
+    return INITIAL_POSTS;
   });
 
   const [isAdminOpen, setIsAdminOpen] = useState(false);

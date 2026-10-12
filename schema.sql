@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS public.posts (
   summary TEXT NOT NULL,
   content TEXT NOT NULL,
   image_url TEXT DEFAULT '',
+  images TEXT[] DEFAULT '{}',
   tags TEXT[] DEFAULT '{}',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );

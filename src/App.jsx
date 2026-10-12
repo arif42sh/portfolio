@@ -6,10 +6,11 @@ import Skills from './components/Skills';
 import Projects from './components/Projects';
 import Stats from './components/Stats';
 import Achievements from './components/Achievements';
+import Blog from './components/Blog';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import AdminModal from './components/AdminModal';
-import { supabase, INITIAL_PROFILE, INITIAL_PROJECTS, INITIAL_SKILLS } from './lib/supabase';
+import { supabase, INITIAL_PROFILE, INITIAL_PROJECTS, INITIAL_SKILLS, INITIAL_POSTS } from './lib/supabase';
 
 export default function App() {
   const [profile, setProfile] = useState(() => {
@@ -25,6 +26,11 @@ export default function App() {
   const [skills, setSkills] = useState(() => {
     const cached = localStorage.getItem('CACHED_SKILLS');
     return cached ? JSON.parse(cached) : INITIAL_SKILLS;
+  });
+
+  const [posts, setPosts] = useState(() => {
+    const cached = localStorage.getItem('CACHED_POSTS');
+    return cached ? JSON.parse(cached) : INITIAL_POSTS;
   });
 
   const [isAdminOpen, setIsAdminOpen] = useState(false);
@@ -52,6 +58,13 @@ export default function App() {
         if (!skillErr && skillData && skillData.length > 0) {
           setSkills(skillData);
           localStorage.setItem('CACHED_SKILLS', JSON.stringify(skillData));
+        }
+
+        // 4. Fetch Posts / Experiences
+        const { data: postData, error: postErr } = await supabase.from('posts').select('*').order('id', { ascending: false });
+        if (!postErr && postData && postData.length > 0) {
+          setPosts(postData);
+          localStorage.setItem('CACHED_POSTS', JSON.stringify(postData));
         }
       } catch (err) {
         console.warn('Live Supabase fetch notice:', err);
@@ -86,6 +99,7 @@ export default function App() {
         <Projects projects={projects} />
         <Stats />
         <Achievements />
+        <Blog posts={posts} />
         <Contact profile={profile} />
       </main>
 
@@ -101,6 +115,8 @@ export default function App() {
         setProjects={setProjects}
         skills={skills}
         setSkills={setSkills}
+        posts={posts}
+        setPosts={setPosts}
       />
     </div>
   );

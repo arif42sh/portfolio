@@ -11,6 +11,7 @@ export default function Navbar({ onOpenAdmin }) {
     { name: 'Skills', href: '#skills' },
     { name: 'Projects', href: '#projects' },
     { name: 'Achievements', href: '#achievements' },
+    { name: 'Stories & Blog', href: '#blog' },
     { name: 'Contact', href: '#contact' },
   ];
 
@@ -18,7 +19,7 @@ export default function Navbar({ onOpenAdmin }) {
   useEffect(() => {
     const handleScroll = () => {
       const scrollPos = window.scrollY + 140;
-      const sections = ['home', 'about', 'skills', 'projects', 'achievements', 'contact'];
+      const sections = ['home', 'about', 'skills', 'projects', 'achievements', 'blog', 'contact'];
 
       for (const sectionId of sections) {
         const el = document.getElementById(sectionId);
